@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR TJ - TAJWEB IT STUDIO</title>
+    
+    <meta name="description" content="Беҳтарин восита барои сохтани QR-кодҳои артистӣ ва муосир бо логотип барои ширкати шумо дар Тоҷикистон.">
+    <meta name="keywords" content="QR код, сохтани QR, TAJWEB IT, QR Art, Tajikistan, Аминҷон, Koryob, Hunar Yob">
+    <meta name="author" content="Bobojonzoda Aminjon">
+    
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <meta property="og:title" content="QR TJ - TAJWEB IT">
+    <meta property="og:description" content="QR-кодҳои артистӣ созед. Лоиҳаи навбатии TAJWEB IT.">
+    <meta property="og:image" content="icon.png">
+    <meta property="og:url" content="https://tajweb-it.github.io/qr-tj/"> <meta property="og:type" content="website">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="icon.png">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* CSS ARCHITECTURE 
+           Theme: Deep Space Violet & Neon
+        */
+        :root {
+            --primary: #a855f7;
+            --primary-glow: rgba(168, 85, 247, 0.4);
+            --secondary: #6366f1;
+            --accent: #00f2ff;
+            --bg-dark: #030712;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 40%);
+        }
+
+        /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* HEADER & NAVIGATION */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(3, 7, 18, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 10%;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 12px; }
+        .logo-dot { width: 12px; height: 12px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 15px var(--primary); }
+        .logo-text { font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; }
+
+        .nav-actions { display: flex; gap: 15px; }
+        .nav-btn {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            color: white; padding: 10px 20px; border-radius: 12px;
+            cursor: pointer; transition: var(--transition); font-weight: 600;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .nav-btn:hover { background: white; color: black; transform: translateY(-2px); }
+
+        /* MAIN LAYOUT */
+        .wrapper {
+            margin-top: 100px; padding: 40px 5%;
+            display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px;
+            max-width: 1400px; margin-left: auto; margin-right: auto;
+        }
+
+        /* EDITOR SECTION */
+        .editor-box {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 32px; padding: 40px; position: relative;
+            backdrop-filter: blur(40px);
+        }
+
+        .input-group { margin-bottom: 25px; }
+        .input-group label { display: block; margin-bottom: 10px; font-weight: 600; color: var(--text-dim); font-size: 0.9rem; }
+        
+        .modern-input {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            padding: 18px; border-radius: 16px; color: white; font-size: 1rem;
+            transition: var(--transition);
+        }
+        .modern-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); outline: none; }
+
+        .file-drop {
+            width: 100%; border: 2px dashed var(--glass-border); border-radius: 20px;
+            padding: 40px; text-align: center; cursor: pointer; transition: var(--transition);
+        }
+        .file-drop:hover { border-color: var(--primary); background: rgba(168, 85, 247, 0.05); }
+
+        .mode-switch {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 25px 0;
+        }
+        .mode-option {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            padding: 15px; border-radius: 14px; cursor: pointer; text-align: center;
+            font-weight: 700; transition: var(--transition); opacity: 0.6;
+        }
+        .mode-option.active { opacity: 1; background: var(--primary); border-color: var(--primary); box-shadow: 0 10px 20px rgba(168, 85, 247, 0.2); }
+
+        .generate-btn {
+            width: 100%; padding: 22px; border-radius: 18px; border: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; font-weight: 800; font-size: 1.1rem; cursor: pointer;
+            transition: var(--transition); box-shadow: 0 20px 40px rgba(168, 85, 247, 0.3);
+        }
+        .generate-btn:hover { transform: scale(1.02); filter: brightness(1.1); }
+
+        /* PREVIEW SECTION */
+        .preview-box { text-align: center; position: sticky; top: 120px; }
+        #res-canvas {
+            width: 100%; max-width: 500px; border-radius: 24px;
+            border: 8px solid var(--glass); display: none; margin: 0 auto;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+        }
+        .empty-preview {
+            width: 100%; aspect-ratio: 1/1; border-radius: 24px;
+            background: var(--glass); border: 1px solid var(--glass-border);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: var(--text-dim);
+        }
+
+        /* DOWNLOAD OPTIONS */
+        .download-area { display: none; margin-top: 30px; }
+        .download-btn {
+            background: #10b981; color: white; padding: 18px 40px; border-radius: 14px;
+            border: none; font-weight: 700; cursor: pointer; width: 100%; transition: var(--transition);
+        }
+        .download-btn:hover { background: #059669; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3); }
+
+        /* MODAL SYSTEM */
+        .modal {
+            position: fixed; inset: 0; z-index: 2000; display: none;
+            justify-content: center; align-items: center; padding: 20px;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
+        }
+        .modal-content {
+            background: #0f172a; border: 1px solid var(--glass-border);
+            width: 100%; max-width: 600px; border-radius: 32px;
+            padding: 40px; position: relative; animation: slideUp 0.5s ease;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        .close-icon { position: absolute; top: 25px; right: 25px; cursor: pointer; font-size: 24px; color: var(--text-dim); }
+
+        .disclaimer-box {
+            background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 20px; border-radius: 16px; margin: 25px 0;
+        }
+
+        /* CONTACT CARDS */
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
+        .contact-item {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            padding: 20px; border-radius: 16px; text-decoration: none; color: white;
+            display: flex; align-items: center; gap: 12px; transition: var(--transition);
+        }
+        .contact-item:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .contact-item i { font-size: 1.5rem; color: var(--primary); }
+
+        /* FOOTER */
+        footer { margin-top: 80px; padding: 40px 10%; border-top: 1px solid var(--glass-border); text-align: center; }
+        .brand-link { color: var(--primary); text-decoration: none; font-weight: 800; font-size: 1.2rem; }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1024px) {
+            .wrapper { grid-template-columns: 1fr; }
+            .preview-box { position: static; order: -1; }
+        }
+        @media (max-width: 600px) {
+            nav { padding: 15px 5%; }
+            .logo-text { font-size: 1.1rem; }
+            .nav-btn span { display: none; }
+            .editor-box { padding: 25px; }
+            .contact-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo-area">
+            <div class="logo-dot"></div>
+            <div class="logo-text">QR VIOLET <span style="color:var(--primary)">ART</span></div>
+        </div>
+        <div class="nav-actions">
+            <button class="nav-btn" onclick="openModal('info')">
+                <i class="fas fa-info-circle"></i> <span>ОИДИ БАРНОМА</span>
+            </button>
+            <button class="nav-btn" onclick="openModal('contact')">
+                <i class="fas fa-paper-plane"></i> <span>ТАМОС</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="wrapper">
+        
+        <div class="editor-box">
+            <div class="input-group">
+                <label>МАТН Ё ЛИНК</label>
+                <input type="text" id="qr-input" class="modern-input" placeholder="https://example.com ё матни худро нависед...">
+            </div>
+
+            <div class="input-group">
+                <label>СУРАТ БАРОИ ДИЗАЙН</label>
+                <div class="file-drop" id="drop-zone" onclick="document.getElementById('file-input').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
+                    <h3 id="file-status">Суратро интихоб кунед</h3>
+                    <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 5px;">PNG, JPG ё WEBP (макс 5MB)</p>
+                    <input type="file" id="file-input" hidden accept="image/*" onchange="handleFile(this)">
+                </div>
+            </div>
+
+            <label style="font-weight: 600; color: var(--text-dim); font-size: 0.9rem;">РЕЖИМИ ГЕНЕРАТСИЯ</label>
+            <div class="mode-switch">
+                <div id="mode-art" class="mode-option active" onclick="changeMode('art')">
+                    <i class="fas fa-palette"></i><br>QR ART
+                </div>
+                <div id="mode-logo" class="mode-option" onclick="changeMode('logo')">
+                    <i class="fas fa-bullseye"></i><br>QR LOGO
+                </div>
+            </div>
+
+            <button class="generate-btn" onclick="processEngine()">
+                <i class="fas fa-magic"></i> СОХТАНИ QR-КОД
+            </button>
+        </div>
+
+        <div class="preview-box">
+            <div id="empty-state" class="empty-preview">
+                <i class="fas fa-qrcode" style="font-size: 5rem; opacity: 0.1; margin-bottom: 20px;"></i>
+                <p>Натиҷа дар ин ҷо пайдо мешавад</p>
+            </div>
+            
+            <canvas id="res-canvas"></canvas>
+            <div id="qr-hidden" style="display:none;"></div>
+
+            <div class="download-area" id="dl-area">
+                <button class="download-btn" onclick="saveToGallery()">
+                    <i class="fas fa-download"></i> САБТ КАРДАН (HD PNG)
+                </button>
+                <p style="margin-top: 15px; color: var(--text-dim); font-size: 0.8rem;">
+                    <i class="fas fa-check-circle"></i> Тайёр барои чоп ва шабакаҳои иҷтимоӣ
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal" id="info-modal">
+        <div class="modal-content">
+            <span class="close-icon" onclick="closeAllModals()">&times;</span>
+            <h2 style="font-size: 2rem; margin-bottom: 15px;">Хуш омадед!</h2>
+            <p style="color: var(--text-dim);">
+                <b>QR VIOLET ART</b> - ин як воситаи касбӣ барои сохтани QR-кодҳои бадеӣ мебошад. Мо аз алгоритмҳои омехтакунии пикселҳо истифода мебарем, то коди шуморо ба як асар табдил диҳем.
+            </p>
+            
+            <div class="disclaimer-box">
+                <h4 style="color: #ef4444; margin-bottom: 5px;"><i class="fas fa-exclamation-triangle"></i> ҲУШДОР:</h4>
+                <p style="font-size: 0.85rem; color: #ef4444;">
+                    Ин барнома тавассути <b>TAJWEB IT</b> таҳия шудааст. Барномасоз барои мундариҷаи кодҳои сохташуда ва истифодаи нодурусти онҳо ҷавобгариро ба уҳда намегирад. Истифодаи кодҳо ба масъулияти худи корбар аст.
+                </p>
+            </div>
+
+            <h4 style="margin-bottom: 15px;">Лоиҳаҳои дигари мо:</h4>
+            <a href="https://www.koryob.ru" class="contact-item">
+                <i class="fas fa-briefcase"></i>
+                <div><b>KORYOB TJ</b><br><small>Ҷойҳои кори холӣ дар Тоҷикистон</small></div>
+            </a>
+            <a href="https://www.hunar-yob.store" class="contact-item" style="margin-top:10px;">
+                <i class="fas fa-tools"></i>
+                <div><b>HUNAR YOB</b><br><small>Платформа барои ҳунармандон</small></div>
+            </a>
+        </div>
+    </div>
+
+    <div class="modal" id="contact-modal">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-icon" onclick="closeAllModals()">&times;</span>
+            <div class="logo-dot" style="margin: 0 auto 20px;"></div>
+            <h2>ТАМОС БО ТАҲИЯГАР</h2>
+            <p style="color: var(--text-dim); margin-bottom: 25px;">Агар шумо хоҳед, ки чунин сайт ё барнома дошта бошед, ба мо нависед:</p>
+            
+            <div class="contact-grid">
+                <a href="https://wa.me/992200702032" class="contact-item">
+                    <i class="fab fa-whatsapp"></i>
+                    <div><b>WhatsApp</b><br><small>+992 200 70 2032</small></div>
+                </a>
+                <a href="https://t.me/975638778" class="contact-item">
+                    <i class="fab fa-telegram-plane"></i>
+                    <div><b>Telegram</b><br><small>975638778</small></div>
+                </a>
+            </div>
+            
+            <p style="margin-top: 30px; font-size: 0.9rem; color: var(--primary); font-weight: 800;">
+                TAJWEB IT - ОЯНДАИ ДИҶИТАЛИИ ШУМО
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 ТАҲИЯ ШУДААСТ ТАВАССУТИ <a href="#" class="brand-link">TAJWEB IT STUDIO</a></p>
+        <div style="margin-top: 10px; opacity: 0.5; font-size: 0.8rem;">Version 1.0.0 (Pro Edition)</div>
+    </footer>
+
+    <script>
+        let currentMode = 'art';
+        let uploadedImg = null;
+        const soundEffect = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3');
+
+        // MODAL LOGIC
+        function openModal(type) {
+            document.getElementById(type + '-modal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAllModals() {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(m => m.style.display = 'none');
+            document.body.style.overflow = 'auto';
+        }
+
+        // FILE HANDLING
+        function handleFile(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if(file.size > 5 * 1024 * 1024) return alert("Файл хеле калон аст! Максимум 5MB.");
+                
+                uploadedImg = file;
+                document.getElementById('file-status').innerText = "Файл бор шуд: " + file.name;
+                document.getElementById('drop-zone').style.borderColor = "#10b981";
+                document.getElementById('drop-zone').style.background = "rgba(16, 185, 129, 0.05)";
+            }
+        }
+
+        // MODE TOGGLE
+        function changeMode(m) {
+            currentMode = m;
+            document.getElementById('mode-art').classList.toggle('active', m === 'art');
+            document.getElementById('mode-logo').classList.toggle('active', m === 'logo');
+        }
+
+        // QR GENERATION ENGINE
+        function processEngine() {
+            const text = document.getElementById('qr-input').value;
+            if (!text) {
+                alert("Лутфан матн ё линкро ворид кунед!");
+                return;
+            }
+
+            soundEffect.play();
+            const qrBox = document.getElementById('qr-hidden');
+            qrBox.innerHTML = "";
+            
+            // Generate raw QR with high error correction
+            new QRCode(qrBox, {
+                text: text,
+                width: 1000,
+                height: 1000,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Wait for QR image to be ready
+            setTimeout(() => {
+                const qrImg = qrBox.querySelector('img');
+                if (uploadedImg) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            renderOnCanvas(qrImg, img);
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(uploadedImg);
+                } else {
+                    renderOnCanvas(qrImg, null);
+                }
+            }, 500);
+        }
+
+        // CANVAS RENDERING CORE
+        function renderOnCanvas(qrImg, userImg) {
+            const canvas = document.getElementById('res-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 1000;
+            canvas.height = 1000;
+
+            // Clear
+            ctx.clearRect(0, 0, 1000, 1000);
+
+            if (userImg && currentMode === 'art') {
+                // --- MODE: QR ART (FULL BACKGROUND MIX) ---
+                ctx.drawImage(userImg, 0, 0, 1000, 1000);
+                
+                // Professional Multiply Mix
+                ctx.globalAlpha = 0.82;
+                ctx.globalCompositeOperation = "multiply";
+                ctx.drawImage(qrImg, 0, 0, 1000, 1000);
+                
+                // Add a subtle violet tint to shadows
+                ctx.globalCompositeOperation = "screen";
+                ctx.globalAlpha = 0.05;
+                ctx.fillStyle = "#a855f7";
+                ctx.fillRect(0,0,1000,1000);
+                
+            } else if (userImg && currentMode === 'logo') {
+                // --- MODE: QR LOGO (CENTER LOGO) ---
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0,0,1000,1000);
+                ctx.drawImage(qrImg, 0, 0, 1000, 1000);
+                
+                const logoSize = 260;
+                const pos = (1000 - logoSize) / 2;
+                
+                ctx.save();
+                // Draw white circle background for logo
+                ctx.beginPath();
+                ctx.arc(500, 500, logoSize/2 + 10, 0, Math.PI * 2);
+                ctx.fillStyle = "#ffffff";
+                ctx.fill();
+                
+                // Clip for round logo
+                ctx.beginPath();
+                ctx.arc(500, 500, logoSize/2, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.drawImage(userImg, pos, pos, logoSize, logoSize);
+                ctx.restore();
+                
+            } else {
+                // --- MODE: STANDARD WHITE ---
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0,0,1000,1000);
+                ctx.drawImage(qrImg, 0, 0, 1000, 1000);
+            }
+
+            // UI Reveal
+            ctx.globalAlpha = 1.0;
+            ctx.globalCompositeOperation = "source-over";
+            
+            document.getElementById('empty-state').style.display = 'none';
+            canvas.style.display = "block";
+            document.getElementById('dl-area').style.display = "block";
+            
+            // Scroll to result on mobile
+            if(window.innerWidth < 1024) {
+                canvas.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // SAVE FUNCTION
+        function saveToGallery() {
+            const canvas = document.getElementById('res-canvas');
+            const link = document.createElement('a');
+            link.download = 'VIOLET_QR_' + Date.now() + '.png';
+            link.href = canvas.toDataURL("image/png", 1.0);
+            link.click();
+        }
+
+        // CLOSE MODAL ON CLICK OUTSIDE
+        window.onclick = function(event) {
+            const infoM = document.getElementById('info-modal');
+            const contactM = document.getElementById('contact-modal');
+            if (event.target == infoM || event.target == contactM) {
+                closeAllModals();
+            }
+        }
+    </script>
+
+</body>
+</html>
