@@ -367,28 +367,131 @@
             document.getElementById('mode-logo').classList.toggle('active', m === 'logo');
         }
 
-        // QR GENERATION ENGINE
-        function processEngine() {
-            const text = document.getElementById('qr-input').value;
-            if (!text) {
-                alert("Лутфан матн ё линкро ворид кунед!");
-                return;
-            }
+        // --- QR GENERATION ENGINE (ISLOHSHUDA) ---
+function processEngine() {
+    const text = document.getElementById('qr-input').value;
+    if (!text) {
+        alert("Лутфан матн ё линкро ворид кунед!");
+        return;
+    }
 
-            soundEffect.play();
-            const qrBox = document.getElementById('qr-hidden');
-            qrBox.innerHTML = "";
+    // Садои муваффақият
+    if(soundEffect) soundEffect.play().catch(e => {});
+    
+    const qrBox = document.getElementById('qr-hidden');
+    qrBox.innerHTML = "";
+    
+    // Пинҳон кардани натиҷаи қаблӣ то омода шудани нав
+    document.getElementById('res-canvas').style.display = "none";
+    document.getElementById('dl-area').style.display = "none";
+    document.getElementById('empty-state').style.display = "flex";
+
+    // Генератсияи QR бо сифати баланд
+    new QRCode(qrBox, {
+        text: text,
+        width: 1000,
+        height: 1000,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    // Истифодаи onload ба ҷои setTimeout барои кафолати боргирӣ
+    const checkQrReady = setInterval(() => {
+        const qrImg = qrBox.querySelector('img');
+        // Санҷиши омодагии тасвир
+        if (qrImg && qrImg.complete && qrImg.naturalWidth > 0) {
+            clearInterval(checkQrReady);
             
-            // Generate raw QR with high error correction
-            new QRCode(qrBox, {
-                text: text,
-                width: 1000,
-                height: 1000,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+            if (uploadedImg) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        renderOnCanvas(qrImg, img);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(uploadedImg);
+            } else {
+                renderOnCanvas(qrImg, null);
+            }
+        }    }, 100); // Ҳар 100мс санҷиш мекунад
+}
 
+// --- CANVAS RENDERING CORE (ISLOHSHUDA) ---
+function renderOnCanvas(qrImg, userImg) {
+    const canvas = document.getElementById('res-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Танзимоти аслии андоза барои сифати баланд (1000x1000)
+    canvas.width = 1000;
+    canvas.height = 1000;
+    
+    // Танзимоти андозаи визуалӣ барои экран (CSS)
+    // Ин хат муҳим аст барои телефонҳо, то канвас "сафед" намонанд
+    canvas.style.width = "100%";
+    canvas.style.maxWidth = "500px";
+    canvas.style.height = "auto";
+    canvas.style.aspectRatio = "1/1";
+    canvas.style.display = "block"; // Нишон додани канвас
+
+    // Ғайрифаъол кардани ҳамворкунии пикселҳо барои тозагии код
+    ctx.imageSmoothingEnabled = false; 
+
+    ctx.clearRect(0, 0, 1000, 1000);
+
+    if (userImg && currentMode === 'art') {
+        // --- MODE: QR ART ---
+        ctx.drawImage(userImg, 0, 0, 1000, 1000);
+        ctx.globalAlpha = 0.82;
+        ctx.globalCompositeOperation = "multiply";
+        ctx.drawImage(qrImg, 0, 0, 1000, 1000);
+        ctx.globalCompositeOperation = "screen";
+        ctx.globalAlpha = 0.05;
+        ctx.fillStyle = "#a855f7";
+        ctx.fillRect(0,0,1000,1000);
+        
+    } else if (userImg && currentMode === 'logo') {
+        // --- MODE: QR LOGO ---
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0,0,1000,1000);
+        ctx.drawImage(qrImg, 0, 0, 1000, 1000);
+        
+        const logoSize = 260;
+        const pos = (1000 - logoSize) / 2;
+        
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(500, 500, logoSize/2 + 10, 0, Math.PI * 2);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();        ctx.beginPath();
+        ctx.arc(500, 500, logoSize/2, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.drawImage(userImg, pos, pos, logoSize, logoSize);
+        ctx.restore();
+        
+    } else {
+        // --- MODE: STANDARD WHITE ---
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0,0,1000,1000);
+        ctx.drawImage(qrImg, 0, 0, 1000, 1000);
+    }
+
+    // Барқарорсозии танзимот
+    ctx.globalAlpha = 1.0;
+    ctx.globalCompositeOperation = "source-over";
+    
+    // Навсозии интерфейс
+    document.getElementById('empty-state').style.display = 'none';
+    canvas.style.display = "block"; // Дубора тасдиқ кардан
+    document.getElementById('dl-area').style.display = "block";
+    
+    // Скролл ба натиҷа дар мобилӣ
+    if(window.innerWidth < 1024) {
+        canvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+   })
             // Wait for QR image to be ready
             setTimeout(() => {
                 const qrImg = qrBox.querySelector('img');
