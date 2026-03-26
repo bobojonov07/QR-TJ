@@ -366,14 +366,61 @@
             document.getElementById('mode-art').classList.toggle('active', m === 'art');
             document.getElementById('mode-logo').classList.toggle('active', m === 'logo');
         }
+        
+.      function processEngine() {
+    // 1. Аввал матнро месанҷем
+    const text = document.getElementById('qr-input').value;
+    if (!text) {
+        alert("Лутфан матн ё линкро ворид кунед!");
+        return;
+    }
 
-        // QR GENERATION ENGINE
-        function processEngine() {
-            const text = document.getElementById('qr-input').value;
-            if (!text) {
-                alert("Лутфан матн ё линкро ворид кунед!");
-                return;
+    // 2. Овози эффектро менавозем
+    if(soundEffect) soundEffect.play();
+
+    // 3. QR-коди хомро (raw) месозем
+    const qrBox = document.getElementById('qr-hidden');
+    qrBox.innerHTML = "";
+    
+    new QRCode(qrBox, {
+        text: text,
+        width: 1000,
+        height: 1000,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    // 4. Пауз барои телефонҳо (мунтазир мешавем, ки QR сохта шавад)
+    setTimeout(() => {
+        const qrImg = qrBox.querySelector('img');
+        
+        // Функсияи ёрирасон барои кашидан дар Canvas
+        const executeRendering = () => {
+            if (uploadedImg) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        renderOnCanvas(qrImg, img);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(uploadedImg);
+            } else {
+                renderOnCanvas(qrImg, null);
             }
+        };
+
+        // Агар QR-код аллакай тайёр бошад ё вақте ки бор мешавад
+        if (qrImg && qrImg.complete) {
+            executeRendering();
+        } else if (qrImg) {
+            qrImg.onload = executeRendering;
+        }
+    }, 1000); // Барои телефонҳои суст 1 сония (1000ms) беҳтарин аст
+}
+        
 
             soundEffect.play();
             const qrBox = document.getElementById('qr-hidden');
